@@ -2,6 +2,7 @@
 
 from collections import deque
 from collections import namedtuple
+from collections import Counter
 import itertools
 import os
 
@@ -48,31 +49,39 @@ def hardGame():
 
 # compares two combinations of colors and returns Pegs
 def mastermindScore(g1,g2):
-	matching = len(set(g1) & set(g2))
-	blacks = sum(1 for v1, v2 in itertools.izip(g1,g2) if v1 == v2)
+	if len(g1)>len(g2):
+		gi,g2 = g2,g1
+
+	g1_count = Counter(g1)
+	g2_count = Counter(g2)
+	matching = sum(min(g2_count[a],b) for a,b in g1_count.items())
+	blacks = sum(1 for v1, v2 in zip(g1,g2) if v1 == v2)
 	return Pegs(blacks, matching-blacks)
 
 # asks the user to insert already tested combinations
 def requestTestedCombinations():
+	print("-----------------------------")
+	nextinput = input("Do you want add new combination? (y or n)")
+	if nextinput.lower() == "n":
+		return
+
 	newCombination = True
 	while newCombination:
 		colorsCombination = deque()
 		
 		count = 5
-		while newCombination:
+		while count > 0:
 			colorsCombination.append(input("Add new color: "))
 			count-=1
-			if count==0:
-				newCombination = False 
 
 		print("Combination: ", colorsCombination)
-		pegs = Pegs(input("Black pegs: "), input("White pegs: "))
+		pegs = Pegs(int(input("Black pegs: ")), int(input("White pegs: ")))
 		quessedCombinations.append(combination(colorsCombination, pegs))
 
 		nextinput = "x"
 		while (nextinput.lower() != 'y' and nextinput.lower() != "n"):
 			print("-----------------------------")
-			nextinput = input("Do you have new combination? (y or n)")
+			nextinput = input("Do you want add new combination? (y or n)")
 		if nextinput.lower() == "y":
 			newCombination = True
 		else:
@@ -92,8 +101,21 @@ def printTestedCombinations():
 mastermind = hardGame()
 print("Possible colors: ", mastermind["colors"])
 requestTestedCombinations()
+print("Possible colors: ", mastermind["colors"])
 printTestedCombinations()
+print()
 
+
+
+for combination in mastermind["possibleCombs"]:
+	#print("testing: ", combination)
+	for quessed in quessedCombinations:
+		score = mastermindScore(quessed.colors,combination)	
+		if (score != quessed.pegs):
+			#print("fails compare: {} {}".format(score, quessed.pegs))
+			break
+	else:
+		print("possibilities", combination)
 """
 for comb in sorted(mastermind["possibleCombs"]):
 	print(comb)
