@@ -5,4 +5,4 @@ Mastermind game helper/solver that calculates possible codes from all possibilit
 
 If you have enough quess tries, it can eliminate the remaining cases that could be right.
 
-It works with masterming game with 8 colors and 5 holes.
+It works with mastermind game with 8 colors and 5 holes.
