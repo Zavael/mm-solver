@@ -6,30 +6,6 @@ from collections import Counter
 import itertools
 import os
 
-''' #input from user
-print("Hello")
-var = input("Your input> ")
-print("oh> ", var)
-'''
-
-''' #variacie pocet vsetkych moznosti
-nieco = ["".join(item) for item in itertools.product("ČMHZBRčŽ", repeat=5)]
-print(nieco)
-
-# variacie z preddefinovaneho deque
-totalColors = deque()
-
-totalColors.append("ci")
-totalColors.append("mo")
-totalColors.append("hn")
-totalColors.append("ze")
-totalColors.append("zl")
-totalColors.append("ru")
-totalColors.append("ce")
-totalColors.append("bi")
-
-colorsCombination = [",".join(item) for item in itertools.product(totalColors, repeat=5)]
-'''
 Pegs = namedtuple('Pegs', 'black, white')
 combination = namedtuple("Combination", "colors, pegs")
 clear = lambda: os.system("cls")
@@ -45,7 +21,7 @@ def mastermind(colors, holes):
 	)
 
 def hardGame():
-	return mastermind(("ci", "mo", "hn", "ze", "zl", "ru", "ce", "bi"), 5)
+	return mastermind(("bi", "ce", "ci", "hn", "mo", "ru", "ze", "zl"), 5)
 
 # compares two combinations of colors and returns Pegs
 def mastermindScore(g1,g2):
@@ -59,7 +35,7 @@ def mastermindScore(g1,g2):
 	return Pegs(blacks, matching-blacks)
 
 # asks the user to insert already tested combinations
-def requestTestedCombinations():
+def requestTestedCombinations(holes):
 	print("-----------------------------")
 	nextinput = input("Do you want add new combination? (y or n)")
 	if nextinput.lower() == "n":
@@ -69,7 +45,7 @@ def requestTestedCombinations():
 	while newCombination:
 		colorsCombination = deque()
 		
-		count = 5
+		count = holes
 		while count > 0:
 			colorsCombination.append(input("Add new color: "))
 			count-=1
@@ -100,14 +76,14 @@ def printTestedCombinations():
 
 mastermind = hardGame()
 print("Possible colors: ", mastermind["colors"])
-requestTestedCombinations()
+requestTestedCombinations(mastermind["holes"])
 print("Possible colors: ", mastermind["colors"])
 printTestedCombinations()
 print()
 
 
 
-for combination in mastermind["possibleCombs"]:
+for combination in sorted(mastermind["possibleCombs"]):
 	#print("testing: ", combination)
 	for quessed in quessedCombinations:
 		score = mastermindScore(quessed.colors,combination)	
