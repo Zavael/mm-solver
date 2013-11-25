@@ -41,6 +41,7 @@ def requestTestedCombinations(holes):
 	if nextinput.lower() == "n":
 		return
 
+	print("Possible colors: ", mastermind["colors"])
 	newCombination = True
 	while newCombination:
 		colorsCombination = deque()
@@ -65,33 +66,36 @@ def requestTestedCombinations(holes):
 	clear()
 
 def printTestedCombinations():
-        print()
-        print("     Colors       Pegs")
-        for comb in quessedCombinations:
-                for color in comb[0]:
-                    print(color, end = " ")
-                print("::", end = " ")
-                print(comb[1][0], end = " ")
-                print(comb[1][1])
+    print()
+    print("     Colors       Pegs")
+    for comb in quessedCombinations:
+            for color in comb[0]:
+                print(color, end = " ")
+            print("::", end = " ")
+            print(comb[1][0], end = " ")
+            print(comb[1][1])
+
+def printPossibleCombinations():
+	printTestedCombinations()
+	print()
+	for combination in sorted(mastermind["possibleCombs"]):
+		#print("testing: ", combination)
+		for quessed in quessedCombinations:
+			score = mastermindScore(quessed.colors,combination)	
+			if (score != quessed.pegs):
+				#print("fails compare: {} {}".format(score, quessed.pegs))
+				break
+		else:
+			print("possibilities", combination)
 
 mastermind = hardGame()
-print("Possible colors: ", mastermind["colors"])
 requestTestedCombinations(mastermind["holes"])
-print("Possible colors: ", mastermind["colors"])
-printTestedCombinations()
-print()
+printPossibleCombinations()
+requestTestedCombinations(mastermind["holes"])
+printPossibleCombinations()
 
 
 
-for combination in sorted(mastermind["possibleCombs"]):
-	#print("testing: ", combination)
-	for quessed in quessedCombinations:
-		score = mastermindScore(quessed.colors,combination)	
-		if (score != quessed.pegs):
-			#print("fails compare: {} {}".format(score, quessed.pegs))
-			break
-	else:
-		print("possibilities", combination)
 """
 for comb in sorted(mastermind["possibleCombs"]):
 	print(comb)
