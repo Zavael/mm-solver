@@ -5,6 +5,7 @@ from collections import namedtuple
 from collections import Counter
 import itertools
 import os
+import sys
 
 Pegs = namedtuple('Pegs', 'black, white')
 combination = namedtuple("Combination", "colors, pegs")
@@ -23,6 +24,11 @@ def mastermind(colors, holes):
 def hardGame():
 	return mastermind(("bi", "ce", "ci", "hn", "mo", "ru", "ze", "zl"), 5)
 
+def printInfo():
+	print("mm-solver v1.0")
+	print("Master mind game helper")
+	print("-----------------------------")
+
 # compares two combinations of colors and returns Pegs
 def mastermindScore(g1,g2):
 	if len(g1)>len(g2):
@@ -36,20 +42,24 @@ def mastermindScore(g1,g2):
 
 # asks the user to insert already tested combinations
 def requestTestedCombinations(holes):
-	print("-----------------------------")
+	printInfo()
 	nextinput = input("Do you want add new combination? (y or n)")
 	if nextinput.lower() == "n":
 		return
 
-	print("Possible colors: ", mastermind["colors"])
 	newCombination = True
 	while newCombination:
+		print("Possible colors: ", mastermind["colors"])
 		colorsCombination = deque()
 		
 		count = holes
 		while count > 0:
-			colorsCombination.append(input("Add new color: "))
-			count-=1
+			color = input("Add new color: ")
+			if color in mastermind["colors"]:				
+				colorsCombination.append(color)
+				count-=1
+			else:
+				print("Wrong color. See \"Possible colors\"")
 
 		print("Combination: ", colorsCombination)
 		pegs = Pegs(int(input("Black pegs: ")), int(input("White pegs: ")))
@@ -63,20 +73,25 @@ def requestTestedCombinations(holes):
 			newCombination = True
 		else:
 			newCombination = False
-	clear()
+		clear()
+		printInfo()
+		printTestedCombinations()
+		print()
 
 def printTestedCombinations():
-    print()
-    print("     Colors       Pegs")
-    for comb in quessedCombinations:
-            for color in comb[0]:
-                print(color, end = " ")
-            print("::", end = " ")
-            print(comb[1][0], end = " ")
-            print(comb[1][1])
+	print("")
+	print("Added combinations:")
+	print("----------------------")
+	print("     Colors       Pegs")
+	for comb in quessedCombinations:
+		for color in comb[0]:
+			print(color, end = " ")
+		print("::", end = " ")
+		print(comb[1][0], end = " ")
+		print(comb[1][1])
+	print("----------------------")
 
 def printPossibleCombinations():
-	printTestedCombinations()
 	print()
 	for combination in sorted(mastermind["possibleCombs"]):
 		#print("testing: ", combination)
@@ -88,16 +103,12 @@ def printPossibleCombinations():
 		else:
 			print("possibilities", combination)
 
-mastermind = hardGame()
-requestTestedCombinations(mastermind["holes"])
-printPossibleCombinations()
-requestTestedCombinations(mastermind["holes"])
-printPossibleCombinations()
+try:
+	clear()
+	mastermind = hardGame()
+	requestTestedCombinations(mastermind["holes"])
+	printPossibleCombinations()
+	input()
+except KeyboardInterrupt:
+    sys.exit(0)
 
-
-
-"""
-for comb in sorted(mastermind["possibleCombs"]):
-	print(comb)
-"""
-input()
